@@ -64,6 +64,8 @@ def write_debug_file(file_name, content):
 
 
 def nuke_debug_directory():
+    if not os.path.exists(SKYFFEL_DIR):
+        return
     for item in os.listdir(SKYFFEL_DIR):
         item_path = os.path.join(SKYFFEL_DIR, item)
         if item != "selector_cache.json":
