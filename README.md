@@ -8,18 +8,16 @@
     <p align="center">
         <a href="#-key-features">Features</a> •
         <a href="#-installation">Installation</a> •
-        <a href="#-how-to-use">How to use</a> •
+        <a href="#-how-to-use">How to use</a>
     </p>
 </div>
 
 ## ✅ Key features
 
+- Co-pilot for generating ETL
 - Supports Airbyte Low-Code generation
-- Provides a production ready REST API.
-- Customizable splitting/chunking.
-- Includes options for encoding data using different encoding models both propriatory and open source.
-- Built in code interpreter mode for computational question & answer scenarios.
-- Allows session management through unique IDs for caching purposes.
+- Scrapes documentation
+- Generates OpenAPI spec
 
 ## 📦 Installation
 
