@@ -33,9 +33,8 @@ def elect_main_section_selector(html_tree_str: str):
         temperature=0,
         frequency_penalty=0.7,
     )
-    print(f"get_main_section_selector: {response.usage.total_tokens} tokens")
     selector_json = json.loads(response.choices[0].message.content)
-    pprint(json.dumps(selector_json))
+    logger.debug("Generated selectors %s", json.dumps(selector_json))
     selector = selector_json["selector"]
     return selector
 
@@ -66,10 +65,8 @@ def get_irrelevant_sections_selectors(html_tree_str: str):
         frequency_penalty=0.7,
     )
 
-    print(f"get_irrelevant_sections_selectors: {
-          response.usage.total_tokens} tokens")
     selector_json = json.loads(response.choices[0].message.content)
-    pprint(selector_json)
+    logger.debug("Generated selectors: %s", selector_json)
     return selector_json["selectors"]
 
 
