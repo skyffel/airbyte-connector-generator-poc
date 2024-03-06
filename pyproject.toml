@@ -1,0 +1,34 @@
+[tool.poetry]
+name = "airbyte-connector-generator-poc"
+version = "0.0.0"
+description = "Generates low-oode (YAML) connectors for Airbyte using LLMs"
+authors = [
+    "Philip Andersson <philip@skyffel.com>, Eric Zakariasson <eric@skyffel.com>",
+]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.9,<3.13"
+openai = "^1.13.3"
+pyyaml = "^6.0.1"
+jsonschema = "^4.21.1"
+python-dotenv = "^1.0.1"
+beautifulsoup4 = "^4.12.3"
+openapi-spec-validator = "^0.7.1"
+html2text = "^2024.2.26"
+mypy = "^1.8.0"
+typer = "^0.9.0"
+validators = "^0.22.0"
+playwright = "^1.41.2"
+types-pyyaml = "^6.0.12.12"
+types-beautifulsoup4 = "^4.12.0.20240229"
+types-jsonschema = "^4.21.0.20240118"
+types-requests = "^2.31.0.20240218"
+
+[tool.poetry.scripts]
+skyffel = "airbyte_connector_generator_poc.main:cli"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

@@ -1,0 +1,65 @@
+check:
+  stream_names:
+  - /blog_entries.json_get
+  type: CheckStream
+spec:
+  connection_specification:
+    $schema: http://json-schema.org/draft-07/schema#
+    properties:
+      direction:
+        title: direction
+        type: string
+      fields:
+        title: fields
+        type: string
+      parameters:
+        title: parameters
+        type: string
+      sort:
+        title: sort
+        type: string
+    required: []
+    type: object
+  type: Spec
+streams:
+- name: /blog_entries.json_get
+  primary_key:
+  - uuid
+  retriever:
+    paginator:
+      page_size_option:
+        field_name: pagesize
+        inject_into: request_parameter
+        type: RequestOption
+      page_token_option:
+        field_name: page
+        inject_into: request_parameter
+        type: RequestOption
+      pagination_strategy:
+        page_size: 5
+        type: PageIncrement
+      type: DefaultPaginator
+    record_selector:
+      extractor:
+        field_path:
+        - results
+        type: DpathExtractor
+      type: RecordSelector
+    requester:
+      authenticator:
+        type: NoAuth
+      http_method: GET
+      path: /blog_entries.json
+      request_body_json: {}
+      request_headers: {}
+      request_parameters:
+        direction: '{{ config[''direction''] }}'
+        fields: '{{ config[''fields''] }}'
+        parameters: '{{ config[''parameters''] }}'
+        sort: '{{ config[''sort''] }}'
+      type: HttpRequester
+      url_base: https://www.justice.gov/api/v1
+    type: SimpleRetriever
+  type: DeclarativeStream
+type: DeclarativeSource
+version: 0.65.0

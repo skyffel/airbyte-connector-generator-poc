@@ -1,0 +1,130 @@
+info:
+  description: API for extracting all blog entries from the Department of Justice.
+  title: Department of Justice Blog Entries API
+  version: 1.0.0
+openapi: 3.0.0
+paths:
+  /blog_entries.json:
+    get:
+      description: Retrieves a list of all blog entries from the Department of Justice.
+      operationId: listBlogEntries
+      parameters:
+      - description: A comma-separated list of fields to get.
+        in: query
+        name: fields
+        required: false
+        schema:
+          type: string
+      - description: Filter parameters array such as `parameters[title]="test"`.
+        in: query
+        name: parameters
+        required: false
+        schema:
+          type: string
+      - description: The zero-based index of the page to get, defaults to 0.
+        in: query
+        name: page
+        required: false
+        schema:
+          default: 0
+          type: integer
+      - description: Number of records to get per page.
+        in: query
+        name: pagesize
+        required: false
+        schema:
+          type: integer
+      - description: Field to sort by.
+        in: query
+        name: sort
+        required: false
+        schema:
+          type: string
+      - description: Direction of the sort. ASC or DESC.
+        in: query
+        name: direction
+        required: false
+        schema:
+          enum:
+          - ASC
+          - DESC
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  metadata:
+                    properties:
+                      executionTime:
+                        format: float
+                        type: number
+                      responseInfo:
+                        properties:
+                          developerMessage:
+                            type: string
+                          status:
+                            type: integer
+                        type: object
+                      resultset:
+                        properties:
+                          count:
+                            type: integer
+                          page:
+                            type: integer
+                          pagesize:
+                            type: integer
+                        type: object
+                    type: object
+                  results:
+                    items:
+                      properties:
+                        attachments:
+                          items:
+                            type: object
+                          type: array
+                        body:
+                          type: string
+                        changed:
+                          type: string
+                        component:
+                          items:
+                            properties:
+                              name:
+                                type: string
+                              uuid:
+                                type: string
+                            type: object
+                          type: array
+                        created:
+                          type: string
+                        date:
+                          type: string
+                        image:
+                          items:
+                            type: object
+                          type: array
+                        teaser:
+                          items:
+                            type: object
+                          type: array
+                        title:
+                          type: string
+                        topic:
+                          items:
+                            type: object
+                          type: array
+                        url:
+                          type: string
+                        uuid:
+                          type: string
+                        vuuid:
+                          type: string
+                      type: object
+                    type: array
+                type: object
+          description: A list of blog entries
+      summary: List all blog entries
+servers:
+- url: http://www.justice.gov/api/v1
