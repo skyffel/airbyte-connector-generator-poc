@@ -210,10 +210,13 @@ def determine_paginator(connection_specification: dict, parameters: dict, reques
     paginator = json.loads(
         response.choices[0].message.content).get("paginator")
 
-    if paginator.get("pagination_strategy", "").get("page_size") is None:
+    if "pagination_strategy" not in paginator:
+        return paginator
+
+    if paginator.get("pagination_strategy", {}).get("page_size") is None:
         page_size = 100
 
-        if paginator.get("pagination_strategy", "").get("type") == "OffsetIncrement":
+        if paginator.get("pagination_strategy", {}).get("type") == "OffsetIncrement":
             connection_specification["properties"]["page_size"] = {
                 "type": "integer",
                 "title": "Page Size",
@@ -351,13 +354,14 @@ def generate_airbyte_connector(openapi_spec: str) -> dict:
 
     for path, methods in openapi_spec.get("paths", {}).items():
         for method, resource in methods.items():
+            name = f"{path}_{method}"
             parameters = expand_refs(
                 openapi_spec, resource.get("parameters", []))
             response_schema = get_response_schema(openapi_spec, resource)
             request_body_schema = get_request_body_schema(
                 openapi_spec, resource)
 
-            request_params = {"query": {}, "header": {}}
+            request_params = {"query": {}, "header": {}, "path": {}}
 
             for param_type in request_params.keys():
                 request_params[param_type] = derive_params(
@@ -366,6 +370,10 @@ def generate_airbyte_connector(openapi_spec: str) -> dict:
                         param for param in parameters if param["in"] == param_type],
                     excluded=banned_params.get(param_type, [])
                 )
+
+            for param, value in request_params["path"].items():
+                path = path.replace(
+                    f"{{{param}}}", value)
 
             top_level_properties = determine_top_level_props(response_schema)
 
@@ -388,7 +396,7 @@ def generate_airbyte_connector(openapi_spec: str) -> dict:
             )
 
             stream = {
-                "name": f"{path}_{method}",
+                "name": name,
                 "primary_key": primary_key,
                 "type": "DeclarativeStream",
                 "retriever": {
@@ -400,7 +408,7 @@ def generate_airbyte_connector(openapi_spec: str) -> dict:
                             "field_path": top_level_properties,
                         },
                     },
-                    "paginator": paginator if paginator else {"type": "NoPaginator"},
+                    "paginator": paginator if paginator else {"type": "NoPagination"},
                     "requester": {
                         "authenticator": authenticator,
                         "http_method": method.upper(),
