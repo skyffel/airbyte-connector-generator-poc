@@ -2,7 +2,7 @@
 	<img width="100px" src="https://framerusercontent.com/images/cAARifhJDsiixC5dDUpMal42BM.svg" />
 	<h1>skyffel</h1>
 	<p>
-		<b>Move your business data from A to B with AI.</b>
+		<b>moving your data from a to b, one shovel at a time.</b>
 	</p>
 	<br>
     <p align="center">
@@ -14,10 +14,10 @@
 
 ## ✅ Key features
 
-- Co-pilot for generating ETL
-- Supports Airbyte Low-Code generation
-- Scrapes documentation
-- Generates OpenAPI spec
+- Co-pilot for generating ETL code for HTTP APIs
+- Support Airbyte low-code YAML connectors
+- Scrapes API documentation
+- Produces OpenAPI specifications
 
 ## 📦 Installation
 
@@ -54,7 +54,15 @@
 
 ## 🚀 How to use
 
-Generates s
+Generates an Airbyte low-code YAML connector using the API documentation provided via URLs.
+
+```bash
+skyffel --goal "<MY ETL GOAL>" --urls "<URL DOC 1>" --urls "<URL DOC 2>"
+```
+
+### Example
+
+Here we generate a connector for extracting all blog posts from the Department of Justice.
 
 ```bash
 skyffel \
