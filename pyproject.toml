@@ -25,6 +25,10 @@ types-pyyaml = "^6.0.12.12"
 types-beautifulsoup4 = "^4.12.0.20240229"
 types-jsonschema = "^4.21.0.20240118"
 types-requests = "^2.31.0.20240218"
+sentence-transformers = "^2.5.1"
+langchain = "^0.1.11"
+faiss-cpu = "^1.8.0"
+langchain-text-splitters = "^0.0.1"
 
 [tool.poetry.scripts]
 skyffel = "airbyte_connector_generator_poc.main:cli"

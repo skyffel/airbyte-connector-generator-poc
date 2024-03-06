@@ -73,50 +73,95 @@ def validate_openapi_spec(openapi_spec: dict):
         return False, e
 
 
-async def extract_details(markdown: str, user_goal: str):
-    response = await openai.chat.completions.create(
-        model="gpt-4-turbo-preview",
-        temperature=0,
-        messages=[
-            {
-                "role": "system",
-                "content": """
-You're an expert at extracing information about how to authentication & authorization an API from technical documentation written in markdown.
-When including examples, prefer agnostic code such as cURL or HTTPie over language-specific code.
-Prefer Basic Authentication, API Keys and Bearer Authentication over other methods.
-                
-You're an expert at extracing pagination strategies from technical API documentation written in markdown.
+def extract_details(markdown: str, user_goal: str):
+    from langchain_text_splitters import MarkdownHeaderTextSplitter
+    from langchain_community.embeddings import HuggingFaceEmbeddings
+    from langchain_text_splitters import CharacterTextSplitter
+    from langchain_community.vectorstores import FAISS
 
-You're an HTTP API expert. Given this API documentation in markdown, get the relevant endpoint and describe the resource with:
-- Path
-- HTTP Method
-- Requests body schema
-- Response schema
-- Request headers
-- Request cookies
-- Request query Parameters
+    headers_to_split_on = [
+        ("#", "Header 1"),
+        ("##", "Header 2"),
+        ("###", "Header 3"),
+    ]
 
-NEVER EVER OMIT ANYTHING FOR BREVITY.
-The user will provide a goal, make sure to follow that.
+    markdown_splitter = MarkdownHeaderTextSplitter(
+        headers_to_split_on=headers_to_split_on)
+    docs = markdown_splitter.split_text(markdown)
 
-Take a deep breath, think step by step, and reason yourself to the correct answer.
-                """
-            },
-            {
-                "role": "user",
-                "content": f"My goal: {user_goal}. Extract relevant information from this documentation: {markdown} "
-            }
-        ]
-    )
+    embeddings = HuggingFaceEmbeddings(
+        model_name="sentence-transformers/all-mpnet-base-v2")
 
-    return response.choices[0].message.content
+    store = FAISS.from_documents(docs, embeddings)
+
+    terms = [
+        "Path",
+        "HTTP Method",
+        "Requests body schema",
+        "Response schema",
+        "Request headers",
+        "Request cookies",
+        "Request query Parameters",
+        user_goal,
+    ]
+
+    results = []
+
+    for term in terms:
+        results += [doc.page_content
+                    for doc in store.similarity_search(term, top_k=3)]
+
+    print(results)
+
+    details = "\n".join(results)
+
+    print(details)
+
+    return details
+
+#     response = await openai.chat.completions.create(
+#         model="gpt-4-turbo-preview",
+#         temperature=0,
+#         messages=[
+#             {
+#                 "role": "system",
+#                 "content": """
+# You're an expert at extracing information about how to authentication & authorization an API from technical documentation written in markdown.
+# When including examples, prefer agnostic code such as cURL or HTTPie over language-specific code.
+# Prefer Basic Authentication, API Keys and Bearer Authentication over other methods.
+
+# You're an expert at extracing pagination strategies from technical API documentation written in markdown.
+
+# You're an HTTP API expert. Given this API documentation in markdown, get the relevant endpoint and describe the resource with:
+# - Path
+# - HTTP Method
+# - Requests body schema
+# - Response schema
+# - Request headers
+# - Request cookies
+# - Request query Parameters
+
+# NEVER EVER OMIT ANYTHING FOR BREVITY.
+# The user will provide a goal, make sure to follow that.
+
+# Take a deep breath, think step by step, and reason yourself to the correct answer.
+#                 """
+#             },
+#             {
+#                 "role": "user",
+#                 "content": f"My goal: {user_goal}. Extract relevant information from this documentation: {markdown} "
+#             }
+#         ]
+#     )
+
+#     return response.choices[0].message.content
 
 
 async def generate_openapi_spec_from_markdown(markdown: str, user_goal: str):
     logger.debug(
         f"Start extracting relevant markdown given user goal: %s", user_goal)
 
-    info = await extract_details(markdown, user_goal)
+    info = extract_details(markdown, user_goal)
 
     SYSTEM_PROMPT = f"""
 You’re an expert at writing OpenAPI 3.0 specifications.
