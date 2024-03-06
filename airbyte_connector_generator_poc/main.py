@@ -5,7 +5,6 @@ from airbyte_connector_generator_poc.utils import check_env_for_key, write_env_v
 from airbyte_connector_generator_poc.scraper import scrape_urls
 from asyncio import run
 from airbyte_connector_generator_poc.logger import logger
-from airbyte_connector_generator_poc.airbyte.airbyte import generate_airbyte_connector, validate_airbyte_connector
 
 load_dotenv()
 
@@ -28,6 +27,7 @@ async def _main(goal: str, urls: list[str]):
 
     load_dotenv()
 
+    from airbyte_connector_generator_poc.airbyte.airbyte import generate_airbyte_connector, validate_airbyte_connector
     from airbyte_connector_generator_poc.openapi_generator import generate_openapi_spec
     from airbyte_connector_generator_poc.openapi_spec import load_openapi_spec_from_path_or_url
 
