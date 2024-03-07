@@ -1,6 +1,6 @@
 <div align="center">
-	<img width="100px" src="https://framerusercontent.com/images/cAARifhJDsiixC5dDUpMal42BM.svg" />
-	<h1>skyffel</h1>
+	<img width="128px" src="https://framerusercontent.com/images/cAARifhJDsiixC5dDUpMal42BM.svg" />
+	<br>
 	<p>
 		<b>moving your data from a to b, one shovel at a time.</b>
 	</p>
@@ -43,14 +43,12 @@
    poetry shell
    ```
 
-3. Install requried packages
+3. Install required packages
 
    ```bash
    poetry install
    playwright install
    ```
-
-4. Rename `.env.example` to `.env` and set your environment variables
 
 ## 🚀 How to use
 
@@ -59,9 +57,6 @@ Generates an Airbyte low-code YAML connector using the API documentation provide
 ```bash
 skyffel --goal "<MY ETL GOAL>" --urls "<URL DOC 1>" --urls "<URL DOC 2>"
 ```
-
-### Example
-
 Here we generate a connector for extracting all blog posts from the Department of Justice.
 
 ```bash
@@ -69,3 +64,22 @@ skyffel \
     --goal "extract all blog entries from department of justice" \
     --urls https://www.justice.gov/developer/api-documentation/api_v1
 ```
+
+### 📥 Import to Airbyte
+
+After generating the connector, you need to import it to Airbyte. Eventually they might expose an API to do this programatically 🤞 Until then, here's how:
+
+1. Go to your Airbyte workspace
+2. Click on Builder [BETA] in the menu
+
+   <img width="200px" src="https://github.com/skyffel/airbyte-connector-generator-poc/assets/25622412/4b7ce182-03b4-48d7-a99a-bead287ff297" />
+
+3. Click “New custom connector” in the upper right corner
+
+   <img width="200px" src="https://github.com/skyffel/airbyte-connector-generator-poc/assets/25622412/f89d0660-1dc1-4f37-b46c-c22a94e7cee0" />
+4. Click “Import a YAML” and select the generated `airbyte_connector.yaml`
+
+   <img width="200px" src="https://github.com/skyffel/airbyte-connector-generator-poc/assets/25622412/dc210240-b23d-47b0-a024-26e70834b28a" />
+
+5. Fill in the test values and run the test
+6. Press “Publish to workspace”
