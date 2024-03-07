@@ -259,7 +259,7 @@ def group_paginator_by_inject_into(paginator: dict) -> dict:
     return dict(grouped)
 
 
-def map_request_body(connection_specification: dict, banned_params: dict, data: dict, keys: list[str] = []):
+def map_request_body(connection_specification: dict, banned_params: dict, data: dict, keys: list[str] = [], is_required: bool = False):
     data_type = data.get("type")
 
     latest_key = keys[-1] if keys else None
@@ -270,9 +270,12 @@ def map_request_body(connection_specification: dict, banned_params: dict, data: 
     if data_type == "object":
         result = {}
 
+        required_keys = data.get("required", [])
+
         for k, v in data.get("properties", {}).items():
+            is_required = k in required_keys
             output = map_request_body(
-                connection_specification, banned_params, v, keys + [k])
+                connection_specification, banned_params, v, keys + [k], is_required)
             if output:
                 result[k] = output
 
@@ -285,7 +288,8 @@ def map_request_body(connection_specification: dict, banned_params: dict, data: 
         if enum and len(enum) == 1:
             value = enum[0]
         else:
-            connection_specification["required"].append(config_key)
+            if is_required:
+                connection_specification["required"].append(config_key)
             connection_specification["properties"][config_key] = {
                 "type": data_type,
                 "title": config_key,
