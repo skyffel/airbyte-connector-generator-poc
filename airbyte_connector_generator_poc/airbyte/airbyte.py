@@ -447,7 +447,7 @@ def validate_airbyte_connector(connector: dict):
 
     try:
         jsonschema.validators.validate(connector, airbyte_schema)
-        logger.info("Connector is valid 🥳")
+        logger.info("Connector is valid")
     except jsonschema.exceptions.ValidationError as e:
         logger.error("Connector is invalid: %s", e)
         raise e
