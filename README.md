@@ -19,6 +19,11 @@ This is a proof of concept to generate Airbyte low-code YAML connectors from API
 
 This will generate an OpenAPI specificatin and a Airbyte low-code connector. Try it!
 
+## 📽️ Demo
+
+https://github.com/skyffel/airbyte-connector-generator-poc/assets/25622412/e2922aaa-4f19-4608-8fba-e1e08c201033
+
+
 ## ✅ Key features
 
 - Co-pilot for generating ETL code for HTTP APIs
