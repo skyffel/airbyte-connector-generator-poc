@@ -1,8 +1,8 @@
 <div align="center">
-	<img width="128px" src="https://framerusercontent.com/images/cAARifhJDsiixC5dDUpMal42BM.svg" />
+	<img width="160px" src="https://framerusercontent.com/images/cAARifhJDsiixC5dDUpMal42BM.svg" />
 	<br>
-	<p>
-		<b>moving your data from a to b, one shovel at a time.</b>
+	<br>
+	<p>moving your data from a to b, one shovel at a time.
 	</p>
 	<br>
     <p align="center">
@@ -11,6 +11,12 @@
         <a href="#-how-to-use">How to use</a>
     </p>
 </div>
+
+This is a proof of concept to generate Airbyte low-code YAML connectors from API documentation. We want this to serve as inspiration to what can be done with LLMs. Here's how it works:
+- Specify a goal, e.g "_Fetch all pages posts_"
+- Provide one or more links to documentation, e.g for Notion: [API Intro](https://developers.notion.com/reference/intro), [API Versioning](https://developers.notion.com/reference/versioning) and [Search Endpoint](https://developers.notion.com/reference/post-search)
+
+This will generate an OpenAPI specificatin and a Airbyte low-code connector. Try it!
 
 ## ✅ Key features
 
