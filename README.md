@@ -13,6 +13,7 @@
 </div>
 
 This is a proof of concept to generate Airbyte low-code YAML connectors from API documentation. We want this to serve as inspiration to what can be done with LLMs. Here's how it works:
+
 - Specify a goal, e.g "_Fetch all pages posts_"
 - Provide one or more links to documentation, e.g for Notion: [API Intro](https://developers.notion.com/reference/intro), [API Versioning](https://developers.notion.com/reference/versioning) and [Search Endpoint](https://developers.notion.com/reference/post-search)
 
@@ -60,9 +61,12 @@ This will generate an OpenAPI specificatin and a Airbyte low-code connector. Try
 
 Generates an Airbyte low-code YAML connector using the API documentation provided via URLs.
 
+> Set `DEBUG=true` in `.env` to enable logs
+
 ```bash
 skyffel --goal "<MY ETL GOAL>" --urls "<URL DOC 1>" --urls "<URL DOC 2>"
 ```
+
 Here we generate a connector for extracting all blog posts from the Department of Justice.
 
 ```bash
@@ -83,6 +87,7 @@ After generating the connector, you need to import it to Airbyte. Eventually the
 3. Click “New custom connector” in the upper right corner
 
    <img width="200px" src="https://github.com/skyffel/airbyte-connector-generator-poc/assets/25622412/f89d0660-1dc1-4f37-b46c-c22a94e7cee0" />
+
 4. Click “Import a YAML” and select the generated `airbyte_connector.yaml`
 
    <img width="200px" src="https://github.com/skyffel/airbyte-connector-generator-poc/assets/25622412/dc210240-b23d-47b0-a024-26e70834b28a" />
