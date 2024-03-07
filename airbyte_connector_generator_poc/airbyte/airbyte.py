@@ -284,17 +284,27 @@ def map_request_body(connection_specification: dict, banned_params: dict, data: 
         config_key = "_".join(keys)
         value = "{{ config['" + config_key + "'] }}"
         enum = data.get("enum")
+        example = data.get("example")
 
         if enum and len(enum) == 1:
             value = enum[0]
         else:
-            if is_required:
-                connection_specification["required"].append(config_key)
             connection_specification["properties"][config_key] = {
                 "type": data_type,
                 "title": config_key,
-                **({"enum": enum} if enum else {}),
+                **({"examples": [example]} if example else {}),
+                ** ({"enum": enum} if enum else {}),
             }
+
+            if data_type == "array" and "items" in data and data["items"].get("type") == "object":
+                # objects in arrays are not supported for now
+                connection_specification["properties"][config_key]["type"] = "string"
+                connection_specification["properties"][config_key][
+                    "description"] = "This is an array of objects. For now you have to provide a JSON string."
+                connection_specification["properties"][config_key]["examples"] = example
+
+            if is_required:
+                connection_specification["required"].append(config_key)
 
         return value
 
