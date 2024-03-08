@@ -1,15 +1,11 @@
 <div align="center">
-	<img width="160px" src="https://framerusercontent.com/images/cAARifhJDsiixC5dDUpMal42BM.svg" />
-	<br>
-	<br>
-	<p>moving your data from a to b, one shovel at a time.
-	</p>
-	<br>
-    <p align="center">
-        <a href="#-key-features">Features</a> •
-        <a href="#-installation">Installation</a> •
-        <a href="#-how-to-use">How to use</a>
-    </p>
+	<p><img width="160px" src="https://framerusercontent.com/images/RhOCQS0e2x94WZq2d8hpht7INRQ.png" /></p>
+	<p>moving your data from a to b, one shovel at a time.</p>
+	<p align="center">
+		<a href="#-key-features">Features</a> •
+		<a href="#-installation">Installation</a> •
+		<a href="#-how-to-use">How to use</a>
+   	 </p>
 </div>
 
 This is a proof of concept to generate Airbyte low-code YAML connectors from API documentation. We want this to serve as inspiration to what can be done with LLMs. Here's how it works:
