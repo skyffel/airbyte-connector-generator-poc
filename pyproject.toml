@@ -5,7 +5,7 @@ description = "Generates low-oode (YAML) connectors for Airbyte using LLMs"
 authors = [
     "Philip Andersson <philip@skyffel.com>, Eric Zakariasson <eric@skyffel.com>",
 ]
-license = "MIT"
+license = "LICENSE"
 readme = "README.md"
 
 [tool.poetry.dependencies]
