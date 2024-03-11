@@ -1,4 +1,11 @@
 import os
+import traceback
+
+from rich.console import Console
+from rich.status import Status
+from rich.progress import Progress
+from rich.progress import SpinnerColumn, TextColumn, BarColumn, TaskProgressColumn, TimeElapsedColumn
+
 from airbyte_connector_generator_poc.utils import SKYFFEL_DIR, write_debug_file
 from airbyte_connector_generator_poc.docs_parser import (convert_html_to_markdown,
                                                          extract_relevant_html)
@@ -13,6 +20,15 @@ import hashlib
 
 load_dotenv()
 
+console = Console(log_time=False)
+progress = Progress(
+    SpinnerColumn(),
+    TextColumn("[progress.description]{task.description}"),
+    BarColumn(),
+    TaskProgressColumn(),
+    TimeElapsedColumn(),
+)
+
 
 async def generate_openapi_spec(url_html_documents: dict, user_goal: str):
     assert len(url_html_documents.keys()) > 0
@@ -26,34 +42,40 @@ async def generate_openapi_spec(url_html_documents: dict, user_goal: str):
 
     relevant_html_tags = []
 
-    for url, html_document in url_html_documents.items():
-        url_key = hashlib.md5(url.encode()).hexdigest()
+    with progress:
+        preprocessing_task = progress.add_task(
+            "[bold green]Preprocessing docs...", total=len(url_html_documents.keys()))
 
-        logger.debug(
-            f"Start extracting relevant HTML from docs URL: %s (%s)", url, url_key)
+        for url, html_document in url_html_documents.items():
+            progress.update(preprocessing_task,
+                            description=f"[bold cyan]Preprocessing[/bold cyan] {url}")
 
-        selectors = url_selector_cache.get(key=url_key) or {}
+            url_key = hashlib.md5(url.encode()).hexdigest()
 
-        main_section_selector = selectors.get("main_section_selector")
-        irrelevant_sections_selectors = selectors.get(
-            "irrelevant_sections_selectors")
+            selectors = url_selector_cache.get(key=url_key) or {}
 
-        relevant_html, main_section_selector, irrelevant_sections_selectors = extract_relevant_html(
-            html_document, main_section_selector, irrelevant_sections_selectors)
+            main_section_selector = selectors.get("main_section_selector")
+            irrelevant_sections_selectors = selectors.get(
+                "irrelevant_sections_selectors")
 
-        logger.info(
-            f"Extracted relevant HTML from docs URL: %s (%s)", url, url_key)
+            relevant_html, main_section_selector, irrelevant_sections_selectors = extract_relevant_html(
+                html_document, main_section_selector, irrelevant_sections_selectors)
 
-        write_debug_file(f"relevant_html_{
-                         url_key}.html", relevant_html.prettify())
+            write_debug_file(f"relevant_html_{
+                url_key}.html", relevant_html.prettify())
 
-        url_selector_cache.set(key=url_key, value={
-            "main_section_selector": main_section_selector,
-            "irrelevant_sections_selectors": irrelevant_sections_selectors,
-            "url": url,
-        })
+            url_selector_cache.set(key=url_key, value={
+                "main_section_selector": main_section_selector,
+                "irrelevant_sections_selectors": irrelevant_sections_selectors,
+                "url": url,
+            })
 
-        relevant_html_tags.append(relevant_html)
+            relevant_html_tags.append(relevant_html)
+
+            progress.update(preprocessing_task, advance=1)
+
+        progress.update(preprocessing_task,
+                        description="[bold green]✅ Preprocessed docs")
 
     relevant_html_combined = "\n".join(
         [tag.prettify() for tag in relevant_html_tags])
@@ -64,9 +86,20 @@ async def generate_openapi_spec(url_html_documents: dict, user_goal: str):
     markdown = convert_html_to_markdown(relevant_html_combined)
     write_debug_file("markdown.md", markdown)
 
-    openapi_spec_json = await generate_openapi_spec_from_markdown(markdown, user_goal)
-    clean_openapi_spec(openapi_spec_json)
+    with Status("[bold cyan]Generating OpenAPI spec...", console=console):
+        openapi_spec_json = await generate_openapi_spec_from_markdown(markdown, user_goal)
+        clean_openapi_spec(openapi_spec_json)
+        console.log("[bold green]  ✅ OpenAPI spec generated")
 
-    validate_openapi_spec(openapi_spec_json)
+    ok, err = validate_openapi_spec(openapi_spec_json)
+
+    if ok:
+        console.log("[green bold]  ✅ OpenAPI spec is valid")
+    else:
+        console.log(
+            "[red bold]  ❌ OpenAPI spec is invalid (check .skyffel/openapi_validation_error.log for more details)")
+        write_debug_file("openapi_validation_error.log",
+                         "".join(traceback.format_exception(err)))
+        exit(1)
 
     return openapi_spec_json

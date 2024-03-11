@@ -18,16 +18,20 @@ beautifulsoup4 = "^4.12.3"
 openapi-spec-validator = "^0.7.1"
 html2text = "^2024.2.26"
 mypy = "^1.8.0"
-typer = "^0.9.0"
+typer = {extras = ["all"], version = "^0.9.0"}
 validators = "^0.22.0"
 playwright = "^1.41.2"
 types-pyyaml = "^6.0.12.12"
 types-beautifulsoup4 = "^4.12.0.20240229"
 types-jsonschema = "^4.21.0.20240118"
 types-requests = "^2.31.0.20240218"
+rich = "^13.7.1"
 
 [tool.poetry.scripts]
 skyffel = "airbyte_connector_generator_poc.main:cli"
+
+[tool.poetry.group.dev.dependencies]
+ipykernel = "^6.29.3"
 
 [build-system]
 requires = ["poetry-core"]

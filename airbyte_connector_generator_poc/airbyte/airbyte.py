@@ -1,6 +1,5 @@
 from collections import defaultdict
 import json
-from pprint import pprint
 import yaml
 import jsonschema
 import os
@@ -464,10 +463,9 @@ def validate_airbyte_connector(connector: dict):
 
     try:
         jsonschema.validators.validate(connector, airbyte_schema)
-        logger.info("Connector is valid")
+        return True, None
     except jsonschema.exceptions.ValidationError as e:
-        logger.error("Connector is invalid: %s", e)
-        raise e
+        return False, e
 
 
 if __name__ == "__main__":
