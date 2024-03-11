@@ -66,10 +66,8 @@ def validate_openapi_spec(openapi_spec: dict):
     logger.debug("Validating OpenAPI spec")
     try:
         validate(openapi_spec)
-        logger.info("OpenAPI spec is valid")
         return True, None
     except Exception as e:
-        logger.error(f"OpenAPI spec is not valid: %s", e)
         return False, e
 
 
@@ -125,7 +123,6 @@ Your task is to produce an OpenAPI 3.0 specification from the documentation and 
 Keep this in mind:
 - Include every optional argument and parameter in the specification.
 - Required version headers are very important. E.g the `Notion-Version` header should always be included as a header in the specification
-- If there is any URL path with an extension like `.json` or `.xml` then you must include it.
 
 OUTPUT ONLY JSON!
     """
@@ -142,7 +139,7 @@ Write the OpenAPI 3.0 specification.
     write_debug_file("system_prompt.txt", SYSTEM_PROMPT)
     write_debug_file("user_prompt.txt", USER_PROMPT)
 
-    logger.info("Generating OpenAPI spec")
+    logger.debug("Generating OpenAPI spec")
 
     response = await openai.chat.completions.create(
         messages=[
